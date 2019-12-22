@@ -3,7 +3,7 @@ make zabbix installation easier again
 
 ## install dependencies
     sudo apt-get update
-    apt-transport-https \
+    sudo apt install apt-transport-https \
     ca-certificates \
     curl \
     gnupg-agent \
