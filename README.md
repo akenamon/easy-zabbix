@@ -23,10 +23,10 @@ make zabbix installation easier again
     cd easy-zabbix
   
 ## Start zabbix stack
-    docker-compose -f docker-compose-easy-zabbix.yml up -d 
+    sudo docker-compose -f docker-compose-easy-zabbix.yml up -d 
  
  ### You could easily stop all related services with
-     docker-compose -f docker-compose-easy-zabbix.yml up -d 
+    sudo docker-compose -f docker-compose-easy-zabbix.yml up -d 
      
  
  # Enviroment 
