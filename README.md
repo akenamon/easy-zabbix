@@ -22,7 +22,7 @@ make zabbix installation easier again
     git clone https://github.com/akenamon/easy-zabbix.git
     cd easy-zabbix
     
-## Create mount point for database
+## Create folder for store zabbix database 
     sudo mkdir /docker/mysql/zabbix/data
   
 ## Start zabbix stack
