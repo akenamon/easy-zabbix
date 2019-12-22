@@ -33,7 +33,7 @@ make zabbix installation easier again
      
  
  # Enviroment 
- #### Those are the default user and password, They are just examples, plese modify it before deploying on production.
+ #### They are just examples, plese modify it before deploying on production.
     - MYSQL_ROOT_PASSWORD=secret
     - MYSQL_DATABASE=zabbix
     - MYSQL_USER=zabbix
@@ -41,6 +41,10 @@ make zabbix installation easier again
 
  #### You should adjust for your own timezone
     - PHP_TZ=America/Sao_Paulo
+    
+ #### zabbix user: admin
+ #### zabbix password: zabbix
+       please, change it after first login.
 
     
 
