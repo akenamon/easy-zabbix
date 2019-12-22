@@ -44,7 +44,7 @@ make zabbix installation easier again
     
  #### zabbix user: admin
  #### zabbix password: zabbix
-       please, change it after first login.
+       please, change it after your first login.
 
     
 
