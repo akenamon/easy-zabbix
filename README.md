@@ -21,8 +21,20 @@ make zabbix installation easier again
 ## Start zabbix stack
  docker-compose -f docker-compose-easy-zabbix.yml up -d 
  
- ### you could easily stop all services with
+ ### You could easily stop all related services with
      docker-compose -f docker-compose-easy-zabbix.yml up -d 
+     
+ 
+ # Enviroment 
+ #### Those are the default user and password, They are just examples, plese modify it before deploying on production.
+ - MYSQL_ROOT_PASSWORD=secret
+ - MYSQL_DATABASE=zabbix
+ - MYSQL_USER=zabbix
+ - MYSQL_PASSWORD=zabbix
+
+ #### You should adjust for your own timezone
+ - PHP_TZ=America/Sao_Paulo
+
     
 
 
