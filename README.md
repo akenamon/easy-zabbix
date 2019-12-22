@@ -18,5 +18,11 @@ make zabbix installation easier again
   sudo chmod +x /usr/local/bin/docker-compose
   sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
   
+## Start zabbix stack
+ docker-compose -f docker-compose-easy-zabbix.yml up -d 
+ 
+ ### you could easily stop all services with
+     docker-compose -f docker-compose-easy-zabbix.yml up -d 
+    
 
 
