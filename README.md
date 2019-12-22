@@ -7,7 +7,7 @@ make zabbix installation easier again
     ca-certificates \
     curl \
     gnupg-agent \
-    software-properties-commonsudo
+    software-properties-common
 
 ## install docker-ce
     curl -fsSL https://get.docker.com -o get-docker.sh
