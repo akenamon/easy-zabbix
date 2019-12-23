@@ -23,7 +23,7 @@ make zabbix installation easier again
     cd easy-zabbix
     
 ## Create folder for store zabbix database 
-    sudo mkdir /docker/mysql/zabbix/data
+    sudo mkdir -p /docker/mysql/zabbix/data
   
 ## Start zabbix stack
     sudo docker-compose -f docker-compose-easy-zabbix.yml up -d 
