@@ -1,13 +1,13 @@
 version: '2'
 services:
         zabbix-mysql: 
-                image: mysql:8
+                image: mysql:5.7
                 command: mysqld --default-authentication-plugin=mysql_native_password
                 restart: always
                 volumes:
                         - zabbix-db-data:/var/lib/mysql:rw
                 environment:
-                        - MYSQL_HOST=172.17.0.1
+                        - MYSQL_HOST=172.18.0.1
                         - MYSQL_ROOT_PASSWORD=secret
                         - MYSQL_DATABASE=zabbix
                         - MYSQL_USER=zabbix
@@ -25,7 +25,7 @@ services:
                 restart: always
                 environment:
                         - MYSQL_ROOT_PASSWORD=secret
-                        - DB_SERVER_HOST=172.17.0.1
+                        - DB_SERVER_HOST=172.18.0.1
                         - DB_SERVER_PORT=3306
                         - MYSQL_USER=zabbix
                         - MYSQL_PASSWORD=zabbix
@@ -39,7 +39,7 @@ services:
                 depends_on:
                         - zabbix-mysql
                 links:
-                        - zabbix-mysql
+                        - zabbix-mysql:zabbix-mysql
                 mem_limit: 512m
                 user: root
                 networks:
@@ -51,20 +51,20 @@ services:
                 image: zabbix/zabbix-web-apache-mysql:alpine-4.2-latest
                 restart: always
                 environment:
-                        - DB_SERVER_HOST=172.17.0.1
+                        - DB_SERVER_HOST=172.18.0.1
                         - DB_SERVER_PORT=3306
                         - MYSQL_USER=zabbix
                         - MYSQL_PASSWORD=zabbix
                         - MYSQL_DATABASE=zabbix
-                        - ZBX_SERVER_HOST=172.17.0.1
+                        - ZBX_SERVER_HOST=172.18.0.1
                         - PHP_TZ=America/Sao_Paulo
                 ports:
                         - 80:80
                 links:
-                        - mysql-zabbix:mysql-zabbix
+                        - -zabbix-mysql:zabbix-mysql
                         - zabbix-server:zabbix-server
                 depends_on:
-                        - mysql-zabbix 
+                        - zabbix-mysql 
                         - zabbix-server
                 user: root
                 networks:
@@ -92,7 +92,7 @@ services:
                         aliases:
                             - zabbix-agent
 
-       grafana:
+        grafana:
                 image: grafana/grafana:latest
                 environment:
                         TZ: America/Sao_Paulo
@@ -120,5 +120,5 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.17.0.0/24
-          gateway: 172.17.0.1
+        - subnet: 172.18.0.0/24
+          gateway: 172.18.0.1
