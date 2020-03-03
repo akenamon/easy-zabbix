@@ -1,11 +1,11 @@
 version: '2'
 services:
-        mysql-zabbix: 
+        zabbix-mysql: 
                 image: mysql:8
                 command: mysqld --default-authentication-plugin=mysql_native_password
                 restart: always
                 volumes:
-                        - /docker/mysql/zabbix/data:/var/lib/mysql
+                        - zabbix-db-data:/var/lib/mysql:rw
                 environment:
                         - MYSQL_HOST=172.17.0.1
                         - MYSQL_ROOT_PASSWORD=secret
@@ -14,8 +14,14 @@ services:
                         - MYSQL_PASSWORD=zabbix
                 ports:
                         - 3306:3306
+                user: root
+                networks:
+                     zbx_net:
+                     aliases:
+                        - zabbix-mysql
+                
         zabbix-server:
-                image: zabbix/zabbix-server-mysql:ubuntu-4.4-latest
+                image: zabbix/zabbix-server-mysql:alpine-4.2-latest
                 restart: always
                 environment:
                         - MYSQL_ROOT_PASSWORD=secret
@@ -24,12 +30,25 @@ services:
                         - MYSQL_USER=zabbix
                         - MYSQL_PASSWORD=zabbix
                         - MYSQL_DATABASE=zabbix
+                volumes:
+                        - /etc/localtime:/etc/localtime:ro
+                        - /etc/timezone:/etc/timezone:ro
+                        - ./zbx_env/var/lib/zabbix/modules:/var/lib/zabbix/modules:ro
                 ports:
                         - 10051:10051
                 depends_on:
-                        - mysql-zabbix
+                        - zabbix-mysql
+                links:
+                        - zabbix-mysql
+                mem_limit: 512m
+                user: root
+                networks:
+                    zbx_net:
+                        aliases:
+                             - zabbix-server
+
         zabbix-web:
-                image: zabbix/zabbix-web-apache-mysql:ubuntu-4.4-latest
+                image: zabbix/zabbix-web-apache-mysql:alpine-4.2-latest
                 restart: always
                 environment:
                         - DB_SERVER_HOST=172.17.0.1
@@ -41,16 +60,65 @@ services:
                         - PHP_TZ=America/Sao_Paulo
                 ports:
                         - 80:80
+                links:
+                        - mysql-zabbix:mysql-zabbix
+                        - zabbix-server:zabbix-server
                 depends_on:
                         - mysql-zabbix 
                         - zabbix-server
-        grafana:
-                image: grafana/grafana:latest
+                user: root
+                networks:
+                  zbx_net:
+                    aliases:
+                        - zabbix-web
+
+        zabbix-agent:
+                image: zabbix/zabbix-agent:alpine-4.2-latest
+                ports:
+                    - "10050:10050"
+                volumes:
+                        - /etc/localtime:/etc/localtime:ro
+                        - /etc/timezone:/etc/timezone:ro
                 restart: always
+                links:
+                        - zabbix-server:zabbix-server
+                depends_on:
+                        - zabbix-server
+                user: root
+                privileged: true
+                pid: "host"
+                networks:
+                    zbx_net:
+                        aliases:
+                            - zabbix-agent
+
+       grafana:
+                image: grafana/grafana:latest
                 environment:
                         TZ: America/Sao_Paulo
                 ports:
-                - 3000:3000
+                        - "3000:3000"
                 volumes:
-                - /home/data/grafana:/var/lib/grafana
-                - ./grafana/plugins:/var/lib/grafana/plugins
+                        - grafana-data:/var/lib/grafana:rw
+                restart: always
+                mem_limit: 512m
+                user: root
+                networks:
+                    zbx_net:
+                        aliases:
+                            - grafana
+
+volumes:
+  zabbix-db-data:
+  grafana-data:
+
+networks:
+  zbx_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.17.0.0/24
+          gateway: 172.17.0.1
